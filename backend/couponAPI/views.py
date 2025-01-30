@@ -1,38 +1,57 @@
 # backend/couponAPI/views.py
 
-from django.shortcuts import render, HttpResponse
+
 from rest_framework.views import APIView
 from .models import Coupon
 from rest_framework.response import Response
-from rest_framework import serializers
-
-
-class couponSerializers(serializers.Serializer):
-    name = serializers.CharField(max_length=50)  # クーポン名
-    description = serializers.CharField()         # クーポンの詳細
-    usage_count = serializers.IntegerField(default=0)  # 使用回数
-    max_uses = serializers.IntegerField(default=100)   # 最大使用回数
-    probability = serializers.FloatField(default=0.33)  # 確率（調整可能）
+from .serializers import couponSerializers
 
 
 class couponView(APIView):
     # GET request
     def get(self, request):
+        '''
+        クーポン情報取得
+        '''
         coupon_list = Coupon.objects.all()
-        # JSONに整形
+        # 「オブジェクト」から「JSON」に整形
         serializer = couponSerializers(instance=coupon_list, many=True)
 
         return Response(serializer.data)
 
     # POST request
+
     def post(self, request):
-        # JSONからオブジェクトに整形
+        '''
+        クーポン情報追加
+        '''
+        # 「JSON」から「オブジェクト」に整形
         print("data", request.data)
         serializer = couponSerializers(data=request.data)
-        # データチェック
+        # 入ってくるJSONのデータをチェック
         if serializer.is_valid():
-            new_data = Coupon.objects.create(**serializer.validated_data)
-            return Response(serializer.data) # クリア時DB更新
+            # serializer更新
+            serializer.save()
+
+            return Response(serializer.data)  # 検証通過⇒DB更新
         else:
-            return Response(serializer.errors) # エラーの場合エラーを返す
-        
+            return Response(serializer.errors)  # エラー⇒エラー内容を返す
+
+
+class couponDetailView(APIView):
+    # 特定のIDを調べる
+    def get(self, request, id):
+        coupon = Coupon.objects.get(pk=id)
+        # 「オブジェクト」から特定のIDを「JSON」に整形
+        serializer = couponSerializers(instance=coupon, many=False)
+
+        return Response(serializer.data)
+
+    # 修正
+
+    def put(self, request, id):
+        pass
+    # 削除
+
+    def delete(self, request, id):
+        pass

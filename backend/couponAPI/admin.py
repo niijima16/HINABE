@@ -5,4 +5,8 @@ from django.contrib import admin
 from .models import Coupon
 
 
-admin.site.register(Coupon)
+class CouponModelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'probability']
+
+
+admin.site.register(Coupon, CouponModelAdmin)
