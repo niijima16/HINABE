@@ -47,11 +47,19 @@ class couponDetailView(APIView):
 
         return Response(serializer.data)
 
-    # 修正
-
+    # 特定のIDの内容を修正
     def put(self, request, id):
-        pass
-    # 削除
-
+        # 更新にするデータを獲得
+        print(request.data)
+        # serializerの構築
+        UpdateCoupon = Coupon.objects.get(pk=id)
+        serializer = couponSerializers(instance=UpdateCoupon,data=request.data)
+        if serializer.is_valid():
+            Coupon.objects.filter(pk=id).update(**serializer.validated_data)
+        else:
+            return Response(serializer.errors) 
+    
+    # 特定のIDの内容を削除
     def delete(self, request, id):
-        pass
+        Coupon.objects.get(pk=id).delete()
+        return Response()
