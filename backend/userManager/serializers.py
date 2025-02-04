@@ -1,7 +1,7 @@
-# backend/couponAPI/serializers.py
+# backend/userManager/serializers.py
 
 from rest_framework import serializers
-from .models import Coupon, Questionnaire
+from .models import User
 
 
 # class couponSerializers(serializers.Serializer):
@@ -26,12 +26,7 @@ from .models import Coupon, Questionnaire
 
 #         return Updated_coupon
 
-class couponSerializers(serializers.ModelSerializer):
+class userSerializers(serializers.ModelSerializer):
     class Meta:
-        model = Coupon
-        fields = "__all__"
-        
-class questionnaireSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Questionnaire
+        model = User
         fields = "__all__"

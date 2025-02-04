@@ -1,12 +1,11 @@
 # backend/couponAPI/views.py
 
-
 from rest_framework.views import APIView
 from .models import Coupon
 from rest_framework.response import Response
 from .serializers import couponSerializers
 
-
+# 機能１：クーポンViews
 class couponView(APIView):
     # GET request
     def get(self, request):
@@ -20,7 +19,6 @@ class couponView(APIView):
         return Response(serializer.data)
 
     # POST request
-
     def post(self, request):
         '''
         クーポン情報追加
@@ -47,19 +45,33 @@ class couponDetailView(APIView):
 
         return Response(serializer.data)
 
-    # 特定のIDの内容を修正
+    # 修正
     def put(self, request, id):
-        # 更新にするデータを獲得
         print(request.data)
-        # serializerの構築
-        UpdateCoupon = Coupon.objects.get(pk=id)
-        serializer = couponSerializers(instance=UpdateCoupon,data=request.data)
+        # 更新項目ID取得
+        update_coupon = Coupon.objects.get(pk=id)
+        # serializer設定の取得、整形は2回わたる
+        serializer = couponSerializers(
+            instance=update_coupon, data=request.data)
+
+        # serializerでデータをチェック
         if serializer.is_valid():
-            Coupon.objects.filter(pk=id).update(**serializer.validated_data)
+            # チェック通過の場合データ更新
+            serializer.save()
+            return Response(serializer.data)
+
         else:
-            return Response(serializer.errors) 
-    
-    # 特定のIDの内容を削除
+            return Response(serializer.errors)
+
+    # 削除
     def delete(self, request, id):
         Coupon.objects.get(pk=id).delete()
+
         return Response()
+
+# 機能２：アンケートViews
+class questionnaireView(APIView):
+    pass
+
+class questionnaireDetailView(APIView):
+    pass

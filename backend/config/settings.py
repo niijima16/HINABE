@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'couponAPI',
+    'userManager',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',

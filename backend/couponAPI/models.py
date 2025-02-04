@@ -1,6 +1,5 @@
 # backend/couponAPI/models.py
 
-
 from django.db import models
 
 
@@ -16,8 +15,16 @@ class Coupon(models.Model):
 
 
 class Questionnaire(models.Model):
-    name = models.CharField(max_length=50)  # クーポン名
-    description = models.TextField()         # クーポンの詳細
+    name = models.CharField(max_length=50)  # アンケート名
+    YeasOld = [
+        ('20代', '20代'),
+        ('30代', '30代'),
+        ('40代', '40代'),
+        ('50代', '50代'),
+        ('60代', '60代'),
+        ('60代以上', '60代以上'),
+    ]
+    description = models.CharField(max_length=20,choices=YeasOld,default="20代")         # アンケート詳細
 
     def __str__(self):
         return f"{self.name} - {self.description}"
