@@ -1,51 +1,21 @@
+# backend/userManager/views.py
+
 from rest_framework.views import APIView
-from .models import User
 from rest_framework.response import Response
-from .serializers import userSerializers
+from rest_framework import status
+from .models import User
+from .serializers import UserSerializer
 
-
-class userView(APIView):
-    def get(self, request):
-        phoneList = User.objects.get(self, request)
-
-        serializer = userSerializers(instance=phoneList, many=True)
-
-        return Response(serializer.data)
+class RegisterOrLoginView(APIView):
+    """携帯番号でユーザー登録またはログイン"""
 
     def post(self, request):
-        print("data", request.data)
+        phone_number = request.data.get('phoneNum')
 
-        serializer = userSerializers(data=request.data)
-        if serializer.is_valid:
-            serializer.save()
-            return Response(serializer.data)
+        if not phone_number:
+            return Response({"error": "携帯番号が必要です"}, status=status.HTTP_400_BAD_REQUEST)
 
-        else:
-            return Response(serializer.errors)
+        user, created = User.objects.get_or_create(phoneNum=phone_number)
 
-
-class userDetailView(APIView):
-    def get(self, request, id):
-        a_phoneNum = User.objects.get(pk=id)
-
-        serializer = userSerializers(instance=a_phoneNum, many=False)
-
-        return Response(serializer.data)
-
-    def put(self, request, id):
-        update_phoneNum = User.objects.get(pk=id)
-
-        serializer = userSerializers(
-            instance=update_phoneNum, data=request.data)
-
-        if serializer.is_valid:
-            serializer.save()
-
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-
-    def delete(self, request, id):
-        User.objects.get(pk=id).delete()
-
-        return Response()
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
