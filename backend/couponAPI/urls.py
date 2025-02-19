@@ -14,6 +14,7 @@ urlpatterns = [
     path('lottery/', CouponLotteryView.as_view()),  # クーポン抽選API
     path('questionnaires-list/', QuestionnaireListView.as_view()),  # ユーザー用アンケート取得
     path('submit-questionnaire/', SubmitQuestionnaireView.as_view()),  # アンケート回答
+    
 ]
 
 
