@@ -16,4 +16,5 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
 class QuestionnaireResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionnaireResponse
-        fields = ['id', 'user', 'questionnaire', 'responses', 'submitted_at']
+        fields = ['id', 'questionnaire', 'responses', 'submitted_at']
+        read_only_fields = ['submitted_at']

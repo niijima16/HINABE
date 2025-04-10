@@ -7,4 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('coupon/', include('couponAPI.urls')),
     path('user/', include('userManager.urls')),
+    path('api/', include('userManager.urls')),
+    path('api/', include('couponAPI.urls')),
 ]
