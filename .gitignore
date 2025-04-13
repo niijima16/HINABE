@@ -1,47 +1,50 @@
 # -----------------------------
 # Python / Django
 # -----------------------------
-*.pyc
-__pycache__/
-db.sqlite3
-*.sqlite3
-.env
-*.log
-*.pot
 *.py[cod]
-.Python
-venv/
-.vscode/
-.idea/
-.v*
+__pycache__/
+*.sqlite3
+db.sqlite3
+.env
+.env.local
+*.log
+media/
+static/
+staticfiles/
+.v312
 
 # Django migrations
-*/migrations/
-!*/migrations/__init__.py
+**/migrations/
+!**/migrations/__init__.py
 
-# Media / Static files (optional, keep only if not tracked)
-media/
-staticfiles/
-static/
+# Virtual environments
+venv/
+.venv/
+.python-version
+.Python
+
+# VSCode / PyCharm
+.vscode/
+.idea/
 
 # -----------------------------
 # Node.js / React (Vite)
 # -----------------------------
+# Dependency folders
 frontend/hinabe-frontend/node_modules/
+# Build output
 frontend/hinabe-frontend/dist/
-frontend/hinabe-frontend/.env
-frontend/hinabe-frontend/.DS_Store
-
 # Vite cache
-frontend/hinabe-frontend/.vite
+frontend/hinabe-frontend/.vite/
+# Environment config
+frontend/hinabe-frontend/.env
+frontend/hinabe-frontend/.env.local
 
-# Editor backups
-*~
-*.swp
+# -----------------------------
+# OS / Editor system files
+# -----------------------------
 .DS_Store
-
-# macOS system files
-*.AppleDouble
-.AppleDouble
-.Spotlight-V100
-.Trashes
+*.swp
+*.swo
+*~
+Thumbs.db
