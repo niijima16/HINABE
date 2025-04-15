@@ -34,6 +34,7 @@ class Questionnaire(models.Model):
     """アンケートの内容を管理するモデル（管理者用）"""
     name = models.CharField(max_length=100)  # アンケート名
     questions = models.JSONField(default=dict)  # JSON形式で質問内容を保存
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

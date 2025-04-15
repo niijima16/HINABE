@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 import { loginOrRegister } from '../api';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, onAdminRoute }) => {
   const [phoneNum, setPhoneNum] = useState('');
 
   const handleSubmit = async () => {
-    const res = await loginOrRegister(phoneNum);
-    onLogin(res.data);
+    if (phoneNum === '88886666') {
+      onAdminRoute(phoneNum); // 管理者番号 → パスワード入力ページへ
+    } else {
+      const res = await loginOrRegister(phoneNum);
+      onLogin(res.data);
+    }
   };
 
   return (
     <div>
-      <h2>携帯番号を入力</h2>
+      <h2>携帯電話入力</h2>
       <input value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)} />
-      <button onClick={handleSubmit}>次へ</button>
+      <button onClick={handleSubmit}>送信</button>
     </div>
   );
 };

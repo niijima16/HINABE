@@ -19,3 +19,25 @@ class RegisterOrLoginView(APIView):
 
         serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+
+class AdminLoginView(APIView):
+    """特定電話番号のユーザー用 管理者認証"""
+
+    def post(self, request):
+        phone = request.data.get('phoneNum')
+        password = request.data.get('password')
+
+        if phone != '88886666':
+            return Response({'error': '管理者専用番号ではありません'}, status=status.HTTP_403_FORBIDDEN)
+
+        if password != 'adminpass':  # ここは仮の固定パスワード
+            return Response({'error': 'パスワードが違います'}, status=status.HTTP_403_FORBIDDEN)
+
+        user, _ = User.objects.get_or_create(phoneNum=phone)
+        return Response({
+            'id': user.id,
+            'phoneNum': user.phoneNum,
+            'reg_time': user.reg_time,
+            'isAdmin': True,
+        })

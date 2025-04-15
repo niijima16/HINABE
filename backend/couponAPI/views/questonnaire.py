@@ -1,7 +1,9 @@
 # backend/couponAPI/views/questonnaire.py
 
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, status
 from rest_framework.permissions import IsAdminUser
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from ..models import Coupon, Questionnaire
 from ..serializers import CouponSerializer, QuestionnaireSerializer, QuestionnaireResponseSerializer
 from userManager.models import User
@@ -19,7 +21,15 @@ class QuestionnaireViewSet(viewsets.ModelViewSet):
     """管理者のみアンケートを作成・編集可能"""
     queryset = Questionnaire.objects.all()
     serializer_class = QuestionnaireSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(detail=True, methods=['post'])
+    def activate(self, request, pk=None):
+        Questionnaire.objects.update(is_active=False)  # 全てのアンケートを非アクティブに
+        questionnaire = self.get_object()
+        questionnaire.is_active = True
+        questionnaire.save()
+        return Response({'status': 'activated'}, status=status.HTTP_200_OK)
 
 # ユーザーがアンケートを取得
 class QuestionnaireListView(ListAPIView):
