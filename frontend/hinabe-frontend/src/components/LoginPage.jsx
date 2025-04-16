@@ -1,23 +1,49 @@
+// src/components/LoginPage.jsx
+
 import React, { useState } from 'react';
-import { loginOrRegister } from '../api';
+import { loginWithJWT, parseJwt } from '../api';
 
-const LoginPage = ({ onLogin, onAdminRoute }) => {
+const LoginPage = ({ onLogin }) => {
   const [phoneNum, setPhoneNum] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSubmit = async () => {
-    if (phoneNum === '88886666') {
-      onAdminRoute(phoneNum); // 管理者番号 → パスワード入力ページへ
-    } else {
-      const res = await loginOrRegister(phoneNum);
-      onLogin(res.data);
+  const handleLogin = async () => {
+    try {
+      const res = await loginWithJWT(phoneNum, password);
+      const payload = parseJwt(res.data.access);
+      console.log('JWT payload:', payload);
+
+      onLogin({
+        id: payload.user_id,
+        phoneNum: payload.phoneNum,
+        isAdmin: payload.isAdmin,
+      });
+    } catch (err) {
+      console.error('ログインエラー:', err);
+      setErrorMsg('ログインに失敗しました。電話番号またはパスワードが間違っている可能性があります。');
     }
   };
 
   return (
     <div>
-      <h2>携帯電話入力</h2>
-      <input value={phoneNum} onChange={(e) => setPhoneNum(e.target.value)} />
-      <button onClick={handleSubmit}>送信</button>
+      <h2>ログイン</h2>
+      <input
+        type="text"
+        placeholder="電話番号"
+        value={phoneNum}
+        onChange={(e) => setPhoneNum(e.target.value)}
+      />
+      <br />
+      <input
+        type="password"
+        placeholder="パスワード"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <br />
+      <button onClick={handleLogin}>ログイン</button>
+      {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
     </div>
   );
 };

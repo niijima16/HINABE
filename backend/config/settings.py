@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'couponAPI',
     'userManager',
     'rest_framework',
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+# DFRのJWT認証用
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+AUTH_USER_MODEL = 'userManager.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

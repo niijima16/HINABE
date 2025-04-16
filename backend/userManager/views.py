@@ -5,6 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import User
 from .serializers import UserSerializer
+# JWT
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import MyTokenObtainPairSerializer
+
 
 class RegisterOrLoginView(APIView):
     """携帯番号でユーザー登録またはログイン"""
@@ -41,3 +45,6 @@ class AdminLoginView(APIView):
             'reg_time': user.reg_time,
             'isAdmin': True,
         })
+    
+class MyTokenView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

@@ -1,54 +1,52 @@
-import React, { useState } from 'react';
+// src/App.jsx
+
+import React, { useState, useEffect } from 'react';
 import LoginPage from './components/LoginPage';
-import AdminPasswordPage from './components/AdminPasswordPage';
 import QuestionnairePage from './components/QuestionnairePage';
 import CouponPage from './components/CouponPage';
 import AdminQuestionnairePage from './components/AdminQuestionnairePage';
+import api, { parseJwt } from './api';
 
 function App() {
-  const [user, setUser] = useState(null);         // ログインユーザー情報
-  const [step, setStep] = useState(1);            // ユーザー用フロー制御
-  const [adminPhone, setAdminPhone] = useState(null); // 管理者認証用
+  const [user, setUser] = useState(null);
+  const [step, setStep] = useState(1);
 
-  // ログイン後の情報確認（開発用）
-  if (user) {
-    console.log('ログインユーザー情報:', user);
-  }
+  // 初回マウント時：トークン復元
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const payload = parseJwt(token);
+        setUser({
+          id: payload.user_id,
+          phoneNum: payload.phoneNum,
+          isAdmin: payload.isAdmin,
+        });
+      } catch (err) {
+        console.error('トークン解析エラー:', err);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+      }
+    }
+  }, []);
 
-  // 管理者ログイン成功 → 管理画面へ遷移
-  if (user?.isAdmin) {
-    return <AdminQuestionnairePage user={user} />;
-  }
-
-  // 管理者番号が入力され、パスワード待ち状態
-  if (!user && adminPhone) {
-    return <AdminPasswordPage
-      phoneNum={adminPhone}
-      onLogin={(adminUser) => setUser(adminUser)}
-    />;
-  }
-
-  // 通常ログイン画面（adminかどうかはLoginPageが判断）
+  // ログイン前
   if (!user) {
-    return <LoginPage
-      onLogin={(u) => {
-        setUser(u);
-        setStep(2);
-      }}
-      onAdminRoute={(phoneNum) => setAdminPhone(phoneNum)}
-    />;
+    return <LoginPage onLogin={(u) => {
+      setUser(u);
+      setStep(2);
+    }} />;
   }
 
-  // 一般ユーザー用のフロー（アンケート → クーポン）
-  if (step === 2) {
-    return <QuestionnairePage user={user} onComplete={() => setStep(3)} />;
-  }
+  // 管理者
+  if (user.isAdmin) return <AdminQuestionnairePage user={user} />;
 
-  if (step === 3) {
-    return <CouponPage user={user} />;
-  }
+  // 一般ユーザー
+  if (step === 2) return <QuestionnairePage user={user} onComplete={() => setStep(3)} />;
+  if (step === 3) return <CouponPage user={user} />;
 
-  return null; // fallback（あり得ないが安全のため）
+  return null;
 }
 
 export default App;
