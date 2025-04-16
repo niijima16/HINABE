@@ -48,7 +48,7 @@ export const drawCoupon = (phoneNum) =>
 // ===== 🛠 管理者用：アンケート操作 =====
 
 export const fetchAllQuestionnaires = () =>
-  api.get('/questionnaires/');
+  api.get('/coupon/questionnaires/');
 
 export const updateQuestionnaire = (id, data) =>
   api.patch(`/questionnaires/${id}/`, data);
@@ -58,3 +58,5 @@ export const deleteQuestionnaire = (id) =>
 
 export const activateQuestionnaire = (id) =>
   api.post(`/questionnaires/${id}/activate/`);
+
+export default api;

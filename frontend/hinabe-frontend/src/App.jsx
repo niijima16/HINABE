@@ -11,7 +11,16 @@ function App() {
   const [user, setUser] = useState(null);
   const [step, setStep] = useState(1);
 
-  // 初回マウント時：トークン復元
+  // ✅ ログアウト関数
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    delete api.defaults.headers.common['Authorization'];
+    setUser(null);
+    setStep(1);
+  };
+
+  // トークン復元
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -31,7 +40,6 @@ function App() {
     }
   }, []);
 
-  // ログイン前
   if (!user) {
     return <LoginPage onLogin={(u) => {
       setUser(u);
@@ -39,10 +47,10 @@ function App() {
     }} />;
   }
 
-  // 管理者
-  if (user.isAdmin) return <AdminQuestionnairePage user={user} />;
+  if (user.isAdmin) {
+    return <AdminQuestionnairePage user={user} onLogout={handleLogout} />;
+  }
 
-  // 一般ユーザー
   if (step === 2) return <QuestionnairePage user={user} onComplete={() => setStep(3)} />;
   if (step === 3) return <CouponPage user={user} />;
 
