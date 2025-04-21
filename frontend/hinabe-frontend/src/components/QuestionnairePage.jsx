@@ -1,3 +1,4 @@
+// src/components/QuestionnairePage.jsx
 import React, { useEffect, useState } from 'react';
 import { fetchQuestionnaire, submitQuestionnaire } from '../api';
 

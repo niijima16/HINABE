@@ -1,25 +1,40 @@
+// src/components/AdminPasswordPage.jsx
 import React, { useState } from 'react';
-import { loginAdmin } from '../api';
+import { loginWithJWT, parseJwt } from '../api';  // ✅ 修正ポイント
+import api from '../api';
 
-const AdminPasswordPage = ({ phoneNum, onLogin }) => {
+function AdminPasswordPage({ phoneNum, onLogin }) {
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async () => {
     try {
-      const res = await loginAdmin(phoneNum, password);
-      onLogin(res.data);  // isAdmin: true を含む
+      const res = await loginWithJWT(phoneNum, password);  // ✅ 修正ポイント
+      const payload = parseJwt(res.data.access);
+      onLogin({
+        id: payload.user_id,
+        phoneNum: payload.phoneNum,
+        isAdmin: payload.isAdmin,
+      });
     } catch (err) {
-      alert('認証失敗');
+      setError('ログイン失敗しました。');
     }
   };
 
   return (
     <div>
-      <h2>管理者パスワード</h2>
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleSubmit}>認証</button>
+      <h2>管理者ログイン</h2>
+      <p>電話番号: {phoneNum}</p>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="パスワードを入力"
+      />
+      <button onClick={handleSubmit}>ログイン</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
-};
+}
 
 export default AdminPasswordPage;

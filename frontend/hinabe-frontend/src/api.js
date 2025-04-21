@@ -34,7 +34,7 @@ export const parseJwt = (token) => {
 // ===== 🧑‍💼 一般ユーザー用 =====
 
 export const loginOrRegister = (phoneNum) =>
-  api.post('/auth/', { phoneNum });
+  api.post('/user/auth/', { phoneNum });
 
 export const fetchQuestionnaire = () =>
   api.get('/questionnaires-list/');
