@@ -1,6 +1,6 @@
 // src/components/AdminPasswordPage.jsx
 import React, { useState } from 'react';
-import { loginWithJWT, parseJwt } from '../api';  // ✅ 修正ポイント
+import { loginWithJWT, parseJwt } from '../api';
 import api from '../api';
 
 function AdminPasswordPage({ phoneNum, onLogin }) {
@@ -9,7 +9,7 @@ function AdminPasswordPage({ phoneNum, onLogin }) {
 
   const handleSubmit = async () => {
     try {
-      const res = await loginWithJWT(phoneNum, password);  // ✅ 修正ポイント
+      const res = await loginWithJWT(phoneNum, password);
       const payload = parseJwt(res.data.access);
       onLogin({
         id: payload.user_id,

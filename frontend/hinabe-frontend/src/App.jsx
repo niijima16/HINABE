@@ -8,9 +8,14 @@ import AdminQuestionnairePage from './components/AdminQuestionnairePage';
 import api, { parseJwt } from './api';
 
 function App() {
+
   const [user, setUser] = useState(null);
   const [step, setStep] = useState(1);
   const [phoneNum, setPhoneNum] = useState(null);
+
+  // ←★ここに追加！
+  console.log("App内 user:", user);
+  console.log("App内 step:", step);
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -42,10 +47,15 @@ function App() {
     if (step === 'admin-password') {
       return <AdminPasswordPage phoneNum={phoneNum} onLogin={(u) => setUser(u)} />;
     }
-    return <LoginPage onPhoneSubmit={(num, isAdmin) => {
+    return <LoginPage
+    onPhoneSubmit={(num, isAdmin) => {
       setPhoneNum(num);
       setStep(isAdmin ? 'admin-password' : 2);
-    }} onLogin={(u) => setUser(u)} />;
+    }}
+    onLogin={(u) => {
+      setUser(u);
+      setStep(2);  // ★ これを追加！
+    }}/>;
   }
 
   if (user.isAdmin) return <AdminQuestionnairePage user={user} onLogout={handleLogout} />;
@@ -53,5 +63,7 @@ function App() {
   if (step === 3) return <CouponPage user={user} />;
   return null;
 }
+
+
 
 export default App;

@@ -33,8 +33,8 @@ class QuestionnaireViewSet(viewsets.ModelViewSet):
 
 # ユーザーがアンケートを取得
 class QuestionnaireListView(ListAPIView):
-    """ユーザーが回答するためにアンケートの内容を取得する"""
-    queryset = Questionnaire.objects.all()
+    """ユーザーが回答するためにアクティブなアンケートの内容を取得する"""
+    queryset = Questionnaire.objects.filter(is_active=True)
     serializer_class = QuestionnaireSerializer
 
 # アンケートの回答を保存

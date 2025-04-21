@@ -37,7 +37,7 @@ export const loginOrRegister = (phoneNum) =>
   api.post('/user/auth/', { phoneNum });
 
 export const fetchQuestionnaire = () =>
-  api.get('/questionnaires-list/');
+  api.get('/coupon/questionnaires-list/');
 
 export const submitQuestionnaire = (phoneNum, questionnaireId, responses) =>
   api.post('/submit-questionnaire/', { phoneNum, questionnaire: questionnaireId, responses });
@@ -51,12 +51,12 @@ export const fetchAllQuestionnaires = () =>
   api.get('/coupon/questionnaires/');
 
 export const updateQuestionnaire = (id, data) =>
-  api.patch(`/questionnaires/${id}/`, data);
+  api.patch(`/coupon/questionnaires/${id}/`, data);
 
 export const deleteQuestionnaire = (id) =>
-  api.delete(`/questionnaires/${id}/`);
+  api.delete(`/coupon/questionnaires/${id}/`);
 
 export const activateQuestionnaire = (id) =>
-  api.post(`/questionnaires/${id}/activate/`);
+  api.post(`/coupon/questionnaires/${id}/activate/`);
 
 export default api;

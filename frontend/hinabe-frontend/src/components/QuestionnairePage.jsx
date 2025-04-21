@@ -7,7 +7,19 @@ const QuestionnairePage = ({ user, onComplete }) => {
   const [answers, setAnswers] = useState({});
 
   useEffect(() => {
-    fetchQuestionnaire().then(res => setQuestionnaire(res.data[0]));
+    fetchQuestionnaire()
+      .then(res => {
+        const data = res.data[0];
+        console.log("取得したアンケート:", data);
+
+        // 内部の questions.questions を抽出
+        const parsedQuestions = data.questions?.questions || {};
+        setQuestionnaire({ ...data, questions: parsedQuestions });
+      })
+      .catch(err => {
+        console.error("アンケート取得エラー:", err);
+        alert("アンケートの読み込みに失敗しました");
+      });
   }, []);
 
   const handleSubmit = async () => {
@@ -16,7 +28,7 @@ const QuestionnairePage = ({ user, onComplete }) => {
       questionnaire: questionnaire.id,
       responses: answers
     });
-  
+
     try {
       await submitQuestionnaire(user.phoneNum, questionnaire.id, answers);
       onComplete();
@@ -36,7 +48,11 @@ const QuestionnairePage = ({ user, onComplete }) => {
           <label>{q}</label>
           <select onChange={e => setAnswers({ ...answers, [q]: e.target.value })}>
             <option value="">選択</option>
-            {opts.map(opt => <option key={opt}>{opt}</option>)}
+            {Array.isArray(opts) ? (
+              opts.map(opt => <option key={opt}>{opt}</option>)
+            ) : (
+              <option disabled>選択肢エラー</option>
+            )}
           </select>
         </div>
       ))}
