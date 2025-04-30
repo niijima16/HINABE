@@ -12,8 +12,16 @@ const QuestionnairePage = ({ user, onComplete }) => {
         const data = res.data[0];
         console.log("取得したアンケート:", data);
 
-        // 内部の questions.questions を抽出
-        const parsedQuestions = data.questions?.questions || {};
+        let parsedQuestions;
+        try {
+          parsedQuestions = typeof data.questions === 'string'
+            ? JSON.parse(data.questions)
+            : data.questions;
+        } catch (e) {
+          console.error("質問データのパースに失敗:", e);
+          parsedQuestions = {};
+        }
+
         setQuestionnaire({ ...data, questions: parsedQuestions });
       })
       .catch(err => {
@@ -40,10 +48,12 @@ const QuestionnairePage = ({ user, onComplete }) => {
 
   if (!questionnaire) return <p>読み込み中...</p>;
 
+  const innerQuestions = questionnaire.questions?.questions || questionnaire.questions;
+
   return (
     <div>
       <h2>{questionnaire.name}</h2>
-      {Object.entries(questionnaire.questions).map(([q, opts]) => (
+      {Object.entries(innerQuestions).map(([q, opts]) => (
         <div key={q}>
           <label>{q}</label>
           <select onChange={e => setAnswers({ ...answers, [q]: e.target.value })}>

@@ -8,12 +8,10 @@ import AdminQuestionnairePage from './components/AdminQuestionnairePage';
 import api, { parseJwt } from './api';
 
 function App() {
-
   const [user, setUser] = useState(null);
   const [step, setStep] = useState(1);
   const [phoneNum, setPhoneNum] = useState(null);
 
-  // ←★ここに追加！
   console.log("App内 user:", user);
   console.log("App内 step:", step);
 
@@ -29,7 +27,6 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
         const payload = parseJwt(token);
         setUser({
@@ -37,9 +34,15 @@ function App() {
           phoneNum: payload.phoneNum,
           isAdmin: payload.isAdmin,
         });
-      } catch {
+        // ✅ トークンがある場合だけ Authorization ヘッダーをセット
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch (err) {
+        console.error('JWT解析エラー', err);
         localStorage.clear();
+        delete api.defaults.headers.common['Authorization'];
       }
+    } else {
+      delete api.defaults.headers.common['Authorization'];
     }
   }, []);
 
@@ -47,23 +50,24 @@ function App() {
     if (step === 'admin-password') {
       return <AdminPasswordPage phoneNum={phoneNum} onLogin={(u) => setUser(u)} />;
     }
-    return <LoginPage
-    onPhoneSubmit={(num, isAdmin) => {
-      setPhoneNum(num);
-      setStep(isAdmin ? 'admin-password' : 2);
-    }}
-    onLogin={(u) => {
-      setUser(u);
-      setStep(2);  // ★ これを追加！
-    }}/>;
+    return (
+      <LoginPage
+        onPhoneSubmit={(num, isAdmin) => {
+          setPhoneNum(num);
+          setStep(isAdmin ? 'admin-password' : 2);
+        }}
+        onLogin={(u) => {
+          setUser(u);
+          setStep(2); 
+        }}
+      />
+    );
   }
 
   if (user.isAdmin) return <AdminQuestionnairePage user={user} onLogout={handleLogout} />;
   if (step === 2) return <QuestionnairePage user={user} onComplete={() => setStep(3)} />;
-  if (step === 3) return <CouponPage user={user} />;
+  if (step === 3) return <CouponPage user={user} onLogout={handleLogout} />;
   return null;
 }
-
-
 
 export default App;
